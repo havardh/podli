@@ -8,7 +8,7 @@ import {
   onPlayPause,
   onPlayStatus
 } from "./PlayActions";
-import {info} from "./PodcastInfoService";
+import {info} from "./EpisodeInfoService";
 
 import Expo from "expo";
 
@@ -18,7 +18,6 @@ const playbackInstance = null;
 
 export async function play(id) {
   if (playbackInstance != null) {
-    console.log(PlayStore.getId());
     if (PlayStore.getId() === id) {
       await playbackInstance.playAsync();
       return;
@@ -66,8 +65,6 @@ function onPlaybackStatusUpdate(status) {
 
   const {volume, positionMillis, durationMillis} = status;
 
-  console.log(status);
-
   onSetVolume(volume);
   onSetPosition(positionMillis / durationMillis);
 
@@ -98,7 +95,6 @@ export async function setVolume(volume) {
 export async function setPosition(position) {
   if (playbackInstance != null) {
     const positionMillis = position * PlayStore.getDurationMillis();
-    console.log("set pos", positionMillis);
     await playbackInstance.setStatusAsync({
       positionMillis,
       shouldPlay: true

@@ -2,15 +2,16 @@ import React, { Component } from "react";
 import { StyleSheet, Image, Text, View, Button } from "react-native";
 import Slider from "react-native-slider";
 
-import { info } from "./PodcastInfoService";
+import { info } from "./EpisodeInfoService";
+import * as PodcastInfoService from "./PodcastInfoService";
 import * as PlayService from "./PlayLocalService";
 import PlayStore from "./PlayStore";
 
-const EpisodeDetail = episode => (
+const EpisodeDetail = ({episode, show}) => (
   <View>
     <Image style={styles.avatar} source={{ uri: episode.img }} />
     <View style={styles.details}>
-      <Text>{episode.show}</Text>
+      <Text style={styles.detailsHead}>{show.name}</Text>
       <Text>{episode.title}</Text>
       <Text>{episode.guests.join(", ")}</Text>
     </View>
@@ -22,7 +23,10 @@ const styles = StyleSheet.create({
     width: 200,
     height: 200
   },
-  details: {}
+  details: {},
+  detailsHead: {
+    fontWeight: "bold",
+  }
 });
 
 const PlayButtons = ({ onPlay, onPause, onStop }) => (
@@ -76,7 +80,8 @@ class PlayScreen extends Component {
   async componentDidMount() {
     const id = this.getEpisodeId();
     const episode = await info(id);
-    this.setState({ id, episode });
+    const show = await PodcastInfoService.info(episode.show);
+    this.setState({ id, episode, show });
 
     PlayStore.addListener(this.onStateChange);
   }
@@ -98,11 +103,7 @@ class PlayScreen extends Component {
   };
 
   play = async () => {
-    try {
-      await PlayService.play(this.state.episode.id);
-    } catch (e) {
-      console.log(e);
-    }
+    await PlayService.play(this.state.episode.id);
   };
 
   pause = async () => {
@@ -130,10 +131,10 @@ class PlayScreen extends Component {
       );
     }
 
-    const { episode, playState } = this.state;
+    const { episode, show, playState } = this.state;
     return (
       <View>
-        {episode && <EpisodeDetail {...episode} />}
+        {episode && <EpisodeDetail episode={episode} show={show} />}
 
         <PlaybackStatus {...playState} />
 

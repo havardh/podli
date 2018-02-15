@@ -15,7 +15,7 @@ export function dispatch(action) {
     store.setState(nextState);
 
     if (debug === true) {
-      console.log(".dispatch(action): ")
+      console.log(store.constructor.name + ".reduce(state, action): ")
       console.log("");
       console.log("---- Prev State: ")
       console.log(prevState);

@@ -41,6 +41,5 @@ export function onSetVolume(volume) {
 }
 
 export function onSetPosition(position) {
-  //console.log("onSet", position);
   dispatch({ type: SET_POSITION, data: { position } });
 }

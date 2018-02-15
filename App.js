@@ -13,41 +13,42 @@ import { StackNavigator } from "react-navigation";
 
 import PlayScreen from "./Play";
 
-import { nextUp } from "./EpisodeListService";
-
-const Episode = ({ navigate, ...episode }) => (
-  <TouchableHighlight onPress={() => navigate("Play", { id: episode.id })}>
-    <View style={styles.episode}>
-      <Image
-        style={styles.avatar}
-        source={{ uri: episode.img }}
-        style={{ width: 60, height: 60 }}
-      />
-      <View style={styles.details}>
-        <Text>{episode.show}</Text>
-        <Text>{episode.title}</Text>
-        <Text>{episode.guests.join(", ")}</Text>
-      </View>
-    </View>
-  </TouchableHighlight>
-);
+import EpisodeStore from "./EpisodeStore";
+import * as EpisodeActions from "./EpisodeActions";
+import * as EpisodeInfoService from "./EpisodeInfoService";
+import { list } from "./PodcastListService";
+import EpisodeListItem from "./EpisodeListItem";
+import ShowListItem from "./ShowListItem";
 
 class HomeScreen extends Component {
-  state = {};
+  state = { episodes: EpisodeStore.getState() };
 
   componentDidMount() {
-    nextUp().then(episodes => {
-      this.setState({ episodes });
-    });
+    EpisodeStore.addListener(this.onStateChange);
   }
+
+  componentWillUnmount() {
+    EpisodeStore.removeListener(this.onStateChange);
+  }
+
+  onStateChange = () => {
+    this.setState({ episodes: EpisodeStore.getState() });
+  };
+
+  onOpenPlayEpisode = ({ id }) => {
+    const { navigate } = this.props.navigation;
+    navigate("Play", { id });
+  };
 
   render() {
     const { navigate } = this.props.navigation;
     return (
       <View style={styles.container}>
         <FlatList
-          data={this.state.episodes}
-          renderItem={({ item }) => <Episode {...item} navigate={navigate} />}
+          data={this.state.episodes.map(id => ({ id, key: id }))}
+          renderItem={({ item }) => (
+            <EpisodeListItem {...item} onPress={this.onOpenPlayEpisode} />
+          )}
         />
 
         <View style={styles.menu}>
@@ -77,43 +78,65 @@ const styles = StyleSheet.create({
     flex: 1,
     paddingTop: 22
   },
-  episode: {
-    flex: 1,
-    flexDirection: "row",
-    padding: 10,
-    height: 80
-  },
-  avatar: {
-    padding: 5
-  },
   menu: {
     flex: 1,
     flexDirection: "row",
-    justifyContent: "space-between"
   },
-  menubutton: {
-    height: 40,
-    width: 60
-  }
 });
 
 class PickScreen extends Component {
-  render() {
+  state = {};
+
+  onOpenShow = ({ id }) => {
     const { navigate } = this.props.navigation;
+    navigate("List", { showId: id });
+  };
+
+  async componentDidMount() {
+    list()
+      .then(shows => shows.map(id => ({ id, key: id })))
+      .then(shows => this.setState({ shows }));
+  }
+
+  render() {
     return (
-      <View>
-        <Button title="To home" onPress={() => navigate("Home")} />
+      <View style={styles.container}>
+        <FlatList
+          data={this.state.shows}
+          renderItem={({ item }) => (
+            <ShowListItem {...item} onPress={this.onOpenShow} />
+          )}
+        />
       </View>
     );
   }
 }
 
 class ListScreen extends Component {
+  state = {};
+
+  componentDidMount() {
+    const { showId } = this.props.navigation.state.params;
+    EpisodeInfoService.list(showId)
+      .then(episodes => episodes.map(id => ({ id, key: id })))
+      .then(episodes => {
+        this.setState({ episodes });
+      });
+  }
+
+  onAddEpisode = ({ id }) => {
+    EpisodeActions.onAddEpisode(id);
+  };
+
   render() {
-    const { navigate } = this.props.navigation;
     return (
-      <View>
-        <Button title="To home" onPress={() => navigate("Home")} />
+      <View style={styles.container}>
+        <FlatList
+          data={this.state.episodes}
+          renderItem={({ item }) => (
+            <EpisodeListItem {...item} onPress={this.onAddEpisode} />
+          )}
+        />
       </View>
     );
   }
