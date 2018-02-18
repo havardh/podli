@@ -12,7 +12,7 @@ import {
 
 import { Font } from "expo";
 
-import { StackNavigator } from "react-navigation";
+import { TabNavigator, TabBarBottom, StackNavigator } from "react-navigation";
 
 import PlayScreen from "./Play";
 
@@ -24,6 +24,10 @@ import EpisodeListItem from "./EpisodeListItem";
 import ShowListItem from "./ShowListItem";
 
 class HomeScreen extends Component {
+  static navigationOptions = {
+    title: "Up Next"
+  };
+
   state = { episodes: EpisodeStore.getState() };
 
   async componentDidMount() {
@@ -58,24 +62,6 @@ class HomeScreen extends Component {
             <EpisodeListItem {...item} onPress={this.onOpenPlayEpisode} />
           )}
         />
-
-        <View style={styles.menu}>
-          <Button
-            style={styles.menubutton}
-            title="Play"
-            onPress={() => navigate("Play")}
-          />
-          <Button
-            style={styles.menubutton}
-            title="Pick"
-            onPress={() => navigate("Pick")}
-          />
-          <Button
-            style={styles.menubutton}
-            title="Play"
-            onPress={() => navigate("Play")}
-          />
-        </View>
       </View>
     );
   }
@@ -85,14 +71,14 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     paddingTop: 22
-  },
-  menu: {
-    flex: 1,
-    flexDirection: "row"
   }
 });
 
 class PickScreen extends Component {
+  static navigationOptions = {
+    title: "Podcasts"
+  };
+
   state = {};
 
   onOpenShow = ({ podcastId }) => {
@@ -121,6 +107,9 @@ class PickScreen extends Component {
 }
 
 class ListScreen extends Component {
+  static navigationOptions = {
+    title: "Episodes"
+  };
   state = {};
 
   componentDidMount() {
@@ -168,12 +157,25 @@ class SpecScreen extends Component {
   }
 }
 
-const App = StackNavigator({
+const HomeStack = StackNavigator({
   Home: { screen: HomeScreen },
-  Play: { screen: PlayScreen },
-  Pick: { screen: PickScreen },
-  List: { screen: ListScreen },
-  Spec: { screen: SpecScreen }
+  Play: { screen: PlayScreen }
 });
+
+const ListStack = StackNavigator({
+  Pick: { screen: PickScreen },
+  List: { screen: ListScreen }
+});
+
+const App = TabNavigator(
+  {
+    Home: { screen: HomeStack },
+    List: { screen: ListStack }
+  },
+  {
+    tabBarComponent: TabBarBottom,
+    tabBarPosition: "bottom"
+  }
+);
 
 export default App;

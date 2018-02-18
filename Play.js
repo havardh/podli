@@ -62,6 +62,10 @@ const PlaybackStatus = ({ position, durationMillis }) => (
 );
 
 class PlayScreen extends Component {
+  static navigationOptions = {
+    title: "Play"
+  };
+
   constructor(props) {
     super(props);
     this.state = {
