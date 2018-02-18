@@ -8,7 +8,7 @@ import {
   onPlayPause,
   onPlayStatus
 } from "./PlayActions";
-import {info} from "./EpisodeInfoService";
+import * as EpisodeInfoService from "./EpisodeInfoService";
 
 import Expo from "expo";
 
@@ -16,18 +16,18 @@ const { Audio } = Expo;
 
 const playbackInstance = null;
 
-export async function play(id) {
+export async function play(podcastId, episodeId) {
   if (playbackInstance != null) {
-    if (PlayStore.getId() === id) {
+    if (PlayStore.getId() === episodeId) {
       await playbackInstance.playAsync();
       return;
-    } else {
+    } else {
       await playbackInstance.stopAsync();
       playbackInstance = null;
     }
   }
 
-  const {url} = await info(id);
+  const { url } = await EpisodeInfoService.info(podcastId, episodeId);
 
   await Audio.setAudioModeAsync({
     allowsRecordingIOS: false,
@@ -41,7 +41,7 @@ export async function play(id) {
     shouldPlay: true,
     rate: 1.0,
     shouldCorrectPitch: false,
-    volume: 1.0,//PlayStore.getVolume(),
+    volume: 1.0, //PlayStore.getVolume(),
     isMuted: false,
     isLooping: false
   };
@@ -54,7 +54,7 @@ export async function play(id) {
 
   playbackInstance = sound;
 
-  onPlayStart(id, status.durationMillis);
+  onPlayStart(podcastId, episodeId, status.durationMillis);
 }
 
 function onPlaybackStatusUpdate(status) {
@@ -63,11 +63,10 @@ function onPlaybackStatusUpdate(status) {
     onPlayEnd();
   }
 
-  const {volume, positionMillis, durationMillis} = status;
+  const { volume, positionMillis, durationMillis } = status;
 
   onSetVolume(volume);
   onSetPosition(positionMillis / durationMillis);
-
 }
 
 export async function pause() {

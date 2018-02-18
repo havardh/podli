@@ -17,12 +17,16 @@ class PlayStore extends BaseStore {
     return {
       volume: 1.0,
       position: 0.0,
-      rate: 1.0,
+      rate: 1.0
     };
   }
 
-  getId() {
-    return this.state.id;
+  getEpisodeId() {
+    return this.state.episodeId;
+  }
+
+  getPodcastId() {
+    return this.state.podcastId;
   }
 
   getVolume() {
@@ -36,14 +40,14 @@ class PlayStore extends BaseStore {
   reduce(state, { type, data }) {
     switch (type) {
       case START:
-        const {id, durationMillis} = data;
-        return {...state, id, durationMillis};
+        const { episodeId, podcastId, durationMillis } = data;
+        return { ...state, podcastId, episodeId, durationMillis };
       case END:
-        return {...state, id: null};
+        return { ...state, podcastId: null, episodeId: null };
       case PAUSE:
         return state;
       case STOP:
-        return {...state, id: null};
+        return { ...state, podcastId: null, episodeId: null };
       case SET_VOLUME:
         const { volume } = data;
         return { ...state, volume };

@@ -3,11 +3,14 @@ import {
   StyleSheet,
   Text,
   View,
+  ScrollView,
   FlatList,
   Button,
   Image,
   TouchableHighlight
 } from "react-native";
+
+import { Font } from "expo";
 
 import { StackNavigator } from "react-navigation";
 
@@ -23,7 +26,7 @@ import ShowListItem from "./ShowListItem";
 class HomeScreen extends Component {
   state = { episodes: EpisodeStore.getState() };
 
-  componentDidMount() {
+  async componentDidMount() {
     EpisodeStore.addListener(this.onStateChange);
   }
 
@@ -35,17 +38,22 @@ class HomeScreen extends Component {
     this.setState({ episodes: EpisodeStore.getState() });
   };
 
-  onOpenPlayEpisode = ({ id }) => {
+  onOpenPlayEpisode = ({ episodeId, podcastId }) => {
     const { navigate } = this.props.navigation;
-    navigate("Play", { id });
+    navigate("Play", { episodeId, podcastId });
   };
 
   render() {
     const { navigate } = this.props.navigation;
+
     return (
       <View style={styles.container}>
         <FlatList
-          data={this.state.episodes.map(id => ({ id, key: id }))}
+          data={this.state.episodes.map(({ episodeId, podcastId }) => ({
+            episodeId,
+            podcastId,
+            key: episodeId
+          }))}
           renderItem={({ item }) => (
             <EpisodeListItem {...item} onPress={this.onOpenPlayEpisode} />
           )}
@@ -80,21 +88,21 @@ const styles = StyleSheet.create({
   },
   menu: {
     flex: 1,
-    flexDirection: "row",
-  },
+    flexDirection: "row"
+  }
 });
 
 class PickScreen extends Component {
   state = {};
 
-  onOpenShow = ({ id }) => {
+  onOpenShow = ({ podcastId }) => {
     const { navigate } = this.props.navigation;
-    navigate("List", { showId: id });
+    navigate("List", { podcastId });
   };
 
   async componentDidMount() {
     list()
-      .then(shows => shows.map(id => ({ id, key: id })))
+      .then(shows => shows.map(podcastId => ({ podcastId, key: podcastId })))
       .then(shows => this.setState({ shows }));
   }
 
@@ -116,19 +124,26 @@ class ListScreen extends Component {
   state = {};
 
   componentDidMount() {
-    const { showId } = this.props.navigation.state.params;
-    EpisodeInfoService.list(showId)
-      .then(episodes => episodes.map(id => ({ id, key: id })))
+    const { podcastId } = this.props.navigation.state.params;
+    EpisodeInfoService.list(podcastId)
+      .then(episodes => {
+        return episodes.map(episodeId => ({
+          episodeId,
+          podcastId,
+          key: episodeId
+        }));
+      })
       .then(episodes => {
         this.setState({ episodes });
       });
   }
 
-  onAddEpisode = ({ id }) => {
-    EpisodeActions.onAddEpisode(id);
+  onAddEpisode = ({ episodeId, podcastId }) => {
+    EpisodeActions.onAddEpisode(podcastId, episodeId);
   };
 
   render() {
+    const { podcastId } = this.props.navigation.state.params;
     return (
       <View style={styles.container}>
         <FlatList

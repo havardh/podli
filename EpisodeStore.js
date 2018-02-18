@@ -1,9 +1,9 @@
-import { register } from "./Dispatcher";
 import { AsyncStorage } from "react-native";
+import { findIndex } from "lodash";
+
+import { register } from "./Dispatcher";
 import BaseStore from "./BaseStore";
 import { ADD, REMOVE, UP, DOWN } from "./EpisodeActions";
-
-const episodes = ["changelog-281", "changelog-280", "tal-638"];
 
 const KEY = "PODLI#EPISODES";
 
@@ -56,35 +56,35 @@ class EpisodeStore extends PersistentStore {
   reduce(state, { type, data }) {
     switch (type) {
       case ADD: {
-        const { episodeId } = data;
-        if (state.indexOf(episodeId) === -1) {
-          return [...state, episodeId];
+        const { podcastId, episodeId } = data;
+        if (findIndex(state, { podcastId, episodeId }) === -1) {
+          return [...state, { podcastId, episodeId }];
         } else {
           return state;
         }
       }
       case UP: {
-        const { episodeId } = data;
-        const i = state.indexOf(episodeId);
+        const { podcastId, episodeId } = data;
+        const i = findIndex(state, { podcastId, episodeId });
         if (i === -1 || i === 0) {
-          return state.splice(i, 1).splice(i - 1, 0, episodeId);
+          return state.splice(i, 1).splice(i - 1, 0, { podcastId, episodeId });
         } else {
           return state;
         }
       }
       case DOWN: {
-        const { episodeId } = data;
-        const i = state.indexOf(episodeId);
+        const { podcastId, episodeId } = data;
+        const i = findIndex(state, { podcastId, episodeId });
         const n = state.length;
         if (i === -1 || i === n - 1) {
-          return state.splice(i, 1).splice(i + 1, 0, episodeId);
+          return state.splice(i, 1).splice(i + 1, 0, { podcastId, episodeId });
         } else {
           return state;
         }
       }
       case REMOVE: {
-        const { episodeId } = data;
-        const i = state.indexOf(episodeId);
+        const { podcastId, episodeId } = data;
+        const i = findIndex(state, { podcastId, episodeId });
         if (i !== -1) {
           return state.splice(i, 1);
         } else {

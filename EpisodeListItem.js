@@ -10,7 +10,7 @@ import {
 } from "react-native";
 
 import * as PodcastInfoService from "./PodcastInfoService";
-import {info} from "./EpisodeInfoService";
+import * as EpisodeInfoService from "./EpisodeInfoService";
 
 const styles = StyleSheet.create({
   episode: {
@@ -26,29 +26,31 @@ const styles = StyleSheet.create({
     marginLeft: 5
   },
   detailsHead: {
-    fontWeight: "bold",
+    fontWeight: "bold"
   }
 });
 
 export default class EpisodeListItem extends Component {
-
   state = {};
 
   async componentDidMount() {
-    const {id} = this.props;
-    const episode = await info(id);
-    const show = await PodcastInfoService.info(episode.show);
-    this.setState({episode,show});
+    const { podcastId, episodeId } = this.props;
+    const podcast = await PodcastInfoService.info(podcastId);
+    const episode = await EpisodeInfoService.info(podcastId, episodeId);
+    this.setState({ episode, podcast });
   }
 
   render() {
-    const {onPress} = this.props;
+    const { onPress } = this.props;
 
     if (!this.state.episode) {
-      return (<View><Text>Loading...</Text></View>);
+      return (
+        <View>
+          <Text>Loading...</Text>
+        </View>
+      );
     }
-    const {episode, show} = this.state;
-
+    const { episode, podcast } = this.state;
 
     return (
       <TouchableHighlight onPress={() => onPress(episode)}>
@@ -59,7 +61,7 @@ export default class EpisodeListItem extends Component {
             style={{ width: 60, height: 60 }}
           />
           <View style={styles.details}>
-            <Text style={styles.detailsHead}>{show.name}</Text>
+            <Text style={styles.detailsHead}>{podcast.name}</Text>
             <Text>{episode.title}</Text>
             <Text>{episode.guests.join(", ")}</Text>
           </View>

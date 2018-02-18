@@ -9,7 +9,7 @@ import {
   TouchableHighlight
 } from "react-native";
 
-import {info} from "./PodcastInfoService";
+import * as PodcastInfoService from "./PodcastInfoService";
 
 const styles = StyleSheet.create({
   episode: {
@@ -20,37 +20,40 @@ const styles = StyleSheet.create({
   },
   avatar: {
     padding: 5
-  },
+  }
 });
 
 export default class ShowListItem extends Component {
-
   state = {};
 
   async componentDidMount() {
-    const {id} = this.props;
-    const show = await info(id);
-    this.setState({show});
+    const { podcastId } = this.props;
+    const podcast = await PodcastInfoService.info(podcastId);
+    this.setState({ podcast });
   }
 
   render() {
-    const {onPress} = this.props;
+    const { onPress } = this.props;
 
-    if (!this.state.show) {
-      return (<View><Text>Loading...</Text></View>);
+    if (!this.state.podcast) {
+      return (
+        <View>
+          <Text>Loading...</Text>
+        </View>
+      );
     }
-    const {show} = this.state;
+    const { podcast } = this.state;
 
     return (
-      <TouchableHighlight onPress={() => onPress(show)}>
+      <TouchableHighlight onPress={() => onPress(podcast)}>
         <View style={styles.episode}>
           <Image
             style={styles.avatar}
-            source={{ uri: show.img }}
+            source={{ uri: podcast.img }}
             style={{ width: 60, height: 60 }}
           />
           <View style={styles.details}>
-            <Text>{show.name}</Text>
+            <Text>{podcast.name}</Text>
           </View>
         </View>
       </TouchableHighlight>

@@ -2,16 +2,16 @@ import React, { Component } from "react";
 import { StyleSheet, Image, Text, View, Button } from "react-native";
 import Slider from "react-native-slider";
 
-import { info } from "./EpisodeInfoService";
+import * as EpisodeInfoService from "./EpisodeInfoService";
 import * as PodcastInfoService from "./PodcastInfoService";
 import * as PlayService from "./PlayLocalService";
 import PlayStore from "./PlayStore";
 
-const EpisodeDetail = ({episode, show}) => (
+const EpisodeDetail = ({ episode, podcast }) => (
   <View>
     <Image style={styles.avatar} source={{ uri: episode.img }} />
     <View style={styles.details}>
-      <Text style={styles.detailsHead}>{show.name}</Text>
+      <Text style={styles.detailsHead}>{podcast.name}</Text>
       <Text>{episode.title}</Text>
       <Text>{episode.guests.join(", ")}</Text>
     </View>
@@ -25,7 +25,7 @@ const styles = StyleSheet.create({
   },
   details: {},
   detailsHead: {
-    fontWeight: "bold",
+    fontWeight: "bold"
   }
 });
 
@@ -70,18 +70,33 @@ class PlayScreen extends Component {
   }
 
   getEpisodeId() {
-    if (this.props.navigation.state.params && this.props.navigation.state.params.id) {
-      return this.props.navigation.state.params.id;
+    if (
+      this.props.navigation.state.params &&
+      this.props.navigation.state.params.episodeId
+    ) {
+      return this.props.navigation.state.params.episodeId;
     } else {
-      return PlayStore.getId();
+      return PlayStore.getEpisodeId();
+    }
+  }
+
+  getPodcastId() {
+    if (
+      this.props.navigation.state.params &&
+      this.props.navigation.state.params.podcastId
+    ) {
+      return this.props.navigation.state.params.podcastId;
+    } else {
+      return PlayStore.getPodcastId();
     }
   }
 
   async componentDidMount() {
-    const id = this.getEpisodeId();
-    const episode = await info(id);
-    const show = await PodcastInfoService.info(episode.show);
-    this.setState({ id, episode, show });
+    const podcastId = this.getPodcastId();
+    const episodeId = this.getEpisodeId();
+    const podcast = await PodcastInfoService.info(podcastId);
+    const episode = await EpisodeInfoService.info(podcastId, episodeId);
+    this.setState({ episodeId, episode, podcast });
 
     PlayStore.addListener(this.onStateChange);
   }
@@ -92,7 +107,7 @@ class PlayScreen extends Component {
 
   onStateChange = () => {
     this.setState(prevState => {
-      if (prevState.id === PlayStore.getId()) {
+      if (prevState.episodeId === PlayStore.getEpisodeId()) {
         return { playState: PlayStore.getState() };
       } else {
         return {
@@ -103,7 +118,8 @@ class PlayScreen extends Component {
   };
 
   play = async () => {
-    await PlayService.play(this.state.episode.id);
+    const { episodeId, podcastId } = this.state.episode;
+    await PlayService.play(podcastId, episodeId);
   };
 
   pause = async () => {
@@ -131,22 +147,16 @@ class PlayScreen extends Component {
       );
     }
 
-    const { episode, show, playState } = this.state;
+    const { episode, podcast, playState } = this.state;
     return (
       <View>
-        {episode && <EpisodeDetail episode={episode} show={show} />}
+        {episode && <EpisodeDetail episode={episode} podcast={podcast} />}
 
         <PlaybackStatus {...playState} />
 
-        <Slider
-          value={playState.position}
-          onValueChange={this.setPosition}
-        />
+        <Slider value={playState.position} onValueChange={this.setPosition} />
 
-        <Slider
-          value={playState.volume}
-          onValueChange={this.setVolume}
-        />
+        <Slider value={playState.volume} onValueChange={this.setVolume} />
 
         <PlayButtons
           onPlay={this.play}

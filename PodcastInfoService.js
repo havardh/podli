@@ -1,16 +1,17 @@
-
 const podcasts = [
   {
-    id: "changelog",
+    podcastId: "changelog",
     name: "The Changelog",
-    img: "https://cdn.changelog.com/images/podcasts/podcast-cover-art-64a3184278271e1751c20f040e3c0055.png?vsn=d",
-    feed: "http://feeds.feedburner.com/changelogshow",
+    img:
+      "https://cdn.changelog.com/images/podcasts/podcast-cover-art-64a3184278271e1751c20f040e3c0055.png?vsn=d",
+    feed: "http://feeds.feedburner.com/changelogshow"
   },
   {
-    id: "tal",
+    podcastId: "tal",
     name: "This American Life",
-    img: "http://www.thisamericanlife.org/sites/all/themes/thislife/images/logo-square-1400.jpg",
-    feed: "http://feed.thisamericanlife.org/talpodcast?format=xml",
+    img:
+      "http://www.thisamericanlife.org/sites/all/themes/thislife/images/logo-square-1400.jpg",
+    feed: "http://feed.thisamericanlife.org/talpodcast?format=xml"
   }
 ];
 
@@ -19,5 +20,5 @@ export async function search(title) {
 }
 
 export async function info(podcastId) {
-  return await podcasts.find(({id}) => podcastId === id);
+  return await podcasts.find(podcast => podcast.podcastId === podcastId);
 }

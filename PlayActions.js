@@ -10,11 +10,12 @@ export const SET_VOLUME = "PLAY#SET_VOLUME";
 export const SET_POSITION = "PLAY#SET_POSITION";
 export const SET_RATE = "PLAY#SET_RATE";
 
-export function onPlayStart(id, durationMillis) {
+export function onPlayStart(podcastId, episodeId, durationMillis) {
   dispatch({
     type: START,
     data: {
-      id,
+      podcastId,
+      episodeId,
       durationMillis
     }
   });
