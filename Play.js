@@ -2,6 +2,7 @@ import React, { Component } from "react";
 import { StyleSheet, Image, Text, View, Button } from "react-native";
 import Slider from "react-native-slider";
 
+import * as EpisodeActions from "./EpisodeActions";
 import * as EpisodeInfoService from "./EpisodeInfoService";
 import * as PodcastInfoService from "./PodcastInfoService";
 import * as PlayService from "./PlayLocalService";
@@ -31,17 +32,26 @@ const styles = StyleSheet.create({
 
 const PlayButtons = ({ onPlay, onPause, onStop }) => (
   <View>
-    <Button style={pbStyles.button} title="▶️" onPress={onPlay} />
-    <Button style={pbStyles.button} title="⏸️" onPress={onPause} />
-    <Button style={pbStyles.button} title="⏹️" onPress={onStop} />
+    <View style={pbStyles.button}>
+      <Button title="▶️" onPress={onPlay} />
+    </View>
+    <View style={pbStyles.button}>
+      <Button style={pbStyles.button} title="⏸️" onPress={onPause} />
+    </View>
+    <View style={pbStyles.button}>
+      <Button style={pbStyles.button} title="⏹️" onPress={onStop} />
+    </View>
   </View>
 );
 
 const pbStyles = StyleSheet.create({
+  container: {
+    flex: 1,
+    flexDirection: "row",
+    justifyContent: "space-between"
+  },
   button: {
-    padding: 20,
-    height: 20,
-    width: 20
+    width: "20%"
   }
 });
 
@@ -142,6 +152,13 @@ class PlayScreen extends Component {
     await PlayService.setPosition(position);
   };
 
+  removeEpisode = () => {
+    const { podcastId, episodeId } = this.state.episode;
+    EpisodeActions.onRemoveEpisode(podcastId, episodeId);
+    const { goBack } = this.props.navigation;
+    goBack();
+  };
+
   render() {
     if (!this.state.episode) {
       return (
@@ -155,6 +172,8 @@ class PlayScreen extends Component {
     return (
       <View>
         {episode && <EpisodeDetail episode={episode} podcast={podcast} />}
+
+        <Button title="Remove" onPress={this.removeEpisode} />
 
         <PlaybackStatus {...playState} />
 
