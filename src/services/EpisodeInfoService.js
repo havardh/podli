@@ -1,4 +1,4 @@
-import { fetchEpisodeList } from "./PodcastXMLFeedAdapter";
+import { fetchEpisodeList } from "../adapters//PodcastXMLFeedAdapter";
 import * as PodcastInfoService from "./PodcastInfoService";
 
 export async function list(podcastId) {

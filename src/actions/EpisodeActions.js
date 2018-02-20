@@ -1,4 +1,4 @@
-import { dispatch } from "./Dispatcher";
+import { dispatch } from "../Dispatcher";
 
 export const ADD = "EPISODE#ADD";
 export const UP = "EPISODE#UP";

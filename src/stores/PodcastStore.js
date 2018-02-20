@@ -1,8 +1,8 @@
 import { find, reject } from "lodash";
 
-import { register } from "./Dispatcher";
-import PersistentStore from "./PersistentStore";
-import { ADD, REMOVE } from "./PodcastActions";
+import { register } from "../Dispatcher";
+import PersistentStore from "../stores/PersistentStore";
+import { ADD, REMOVE } from "../actions/PodcastActions";
 
 class PodcastStore extends PersistentStore {
   constructor() {

@@ -4,20 +4,23 @@ import {
   StyleSheet,
   Text,
   View,
-  Button,
   Image,
   TouchableHighlight
 } from "react-native";
 
-import * as PodcastInfoService from "./PodcastInfoService";
-import * as EpisodeInfoService from "./EpisodeInfoService";
+import * as PodcastInfoService from "../services/PodcastInfoService";
+import * as EpisodeInfoService from "../services/EpisodeInfoService";
 
 const styles = StyleSheet.create({
   episode: {
     flex: 1,
     flexDirection: "row",
     padding: 5,
-    height: 80
+    margin: 4,
+    borderWidth: 1,
+    borderColor: "#ccc",
+    height: 80,
+    backgroundColor: "#fff"
   },
   avatar: {
     padding: 5

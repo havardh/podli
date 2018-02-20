@@ -2,76 +2,16 @@ import React, { Component } from "react";
 import { StyleSheet, Image, Text, View, Button } from "react-native";
 import Slider from "react-native-slider";
 
-import * as EpisodeActions from "./EpisodeActions";
-import * as EpisodeInfoService from "./EpisodeInfoService";
-import * as PodcastInfoService from "./PodcastInfoService";
-import * as PlayService from "./PlayLocalService";
-import PlayStore from "./PlayStore";
+import * as EpisodeActions from "../actions/EpisodeActions";
+import * as EpisodeInfoService from "../services/EpisodeInfoService";
+import * as PodcastInfoService from "../services/PodcastInfoService";
+import * as PlayService from "../services/PlayLocalService";
+import PlayStore from "../stores/PlayStore";
+import EpisodeDetail from "../components/EpisodeDetail";
+import PlaybackControls from "../components/PlaybackControls";
+import PlaybackProgress from "../components/PlaybackProgress";
 
-const EpisodeDetail = ({ episode, podcast }) => (
-  <View>
-    <Image style={styles.avatar} source={{ uri: episode.img }} />
-    <View style={styles.details}>
-      <Text style={styles.detailsHead}>{podcast.name}</Text>
-      <Text>{episode.title}</Text>
-      <Text>{episode.guests.join(", ")}</Text>
-    </View>
-  </View>
-);
-
-const styles = StyleSheet.create({
-  avatar: {
-    width: 200,
-    height: 200
-  },
-  details: {},
-  detailsHead: {
-    fontWeight: "bold"
-  }
-});
-
-const PlayButtons = ({ onPlay, onPause, onStop }) => (
-  <View>
-    <View style={pbStyles.button}>
-      <Button title="▶️" onPress={onPlay} />
-    </View>
-    <View style={pbStyles.button}>
-      <Button style={pbStyles.button} title="⏸️" onPress={onPause} />
-    </View>
-    <View style={pbStyles.button}>
-      <Button style={pbStyles.button} title="⏹️" onPress={onStop} />
-    </View>
-  </View>
-);
-
-const pbStyles = StyleSheet.create({
-  container: {
-    flex: 1,
-    flexDirection: "row",
-    justifyContent: "space-between"
-  },
-  button: {
-    width: "20%"
-  }
-});
-
-const MinuteSeconds = ({ millis }) => (
-  <Text>
-    {(millis / 1000 / 60) | 0}:{((millis / 1000) % 60) | 0}
-  </Text>
-);
-
-const PlaybackStatus = ({ position, durationMillis }) => (
-  <View>
-    <Text>
-      <MinuteSeconds millis={position * durationMillis} />
-      /
-      <MinuteSeconds millis={durationMillis} />
-    </Text>
-  </View>
-);
-
-class PlayScreen extends Component {
+export default class PlayScreen extends Component {
   static navigationOptions = {
     title: "Play"
   };
@@ -175,13 +115,13 @@ class PlayScreen extends Component {
 
         <Button title="Remove" onPress={this.removeEpisode} />
 
-        <PlaybackStatus {...playState} />
+        <PlaybackProgress {...playState} />
 
         <Slider value={playState.position} onValueChange={this.setPosition} />
 
         <Slider value={playState.volume} onValueChange={this.setVolume} />
 
-        <PlayButtons
+        <PlaybackControls
           onPlay={this.play}
           onPause={this.pause}
           onStop={this.stop}
@@ -190,5 +130,3 @@ class PlayScreen extends Component {
     );
   }
 }
-
-export default PlayScreen;

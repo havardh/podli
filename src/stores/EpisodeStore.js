@@ -1,8 +1,8 @@
 import { findIndex, reject } from "lodash";
 
-import { register } from "./Dispatcher";
+import { register } from "../Dispatcher";
 import PersistentStore from "./PersistentStore";
-import { ADD, REMOVE, UP, DOWN } from "./EpisodeActions";
+import { ADD, REMOVE, UP, DOWN } from "../actions/EpisodeActions";
 
 const KEY = "PODLI#EPISODES";
 

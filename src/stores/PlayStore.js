@@ -1,4 +1,4 @@
-import { register } from "./Dispatcher";
+import { register } from "../Dispatcher";
 import BaseStore from "./BaseStore";
 
 import {
@@ -10,7 +10,7 @@ import {
   SET_VOLUME,
   SET_POSITION,
   SET_RATE
-} from "./PlayActions";
+} from "../actions/PlayActions";
 
 class PlayStore extends BaseStore {
   initialState() {

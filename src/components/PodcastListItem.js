@@ -4,12 +4,11 @@ import {
   StyleSheet,
   Text,
   View,
-  Button,
   Image,
   TouchableHighlight
 } from "react-native";
 
-import * as PodcastInfoService from "./PodcastInfoService";
+import * as PodcastInfoService from "../services/PodcastInfoService";
 
 const styles = StyleSheet.create({
   episode: {
@@ -23,7 +22,7 @@ const styles = StyleSheet.create({
   }
 });
 
-export default class ShowListItem extends Component {
+export default class PodcastListItem extends Component {
   state = {};
 
   async componentDidMount() {

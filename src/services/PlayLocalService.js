@@ -1,4 +1,4 @@
-import PlayStore from "./PlayStore";
+import PlayStore from "../stores/PlayStore";
 import {
   onPlayStart,
   onPlayEnd,
@@ -7,7 +7,7 @@ import {
   onPlayStop,
   onPlayPause,
   onPlayStatus
-} from "./PlayActions";
+} from "../actions/PlayActions";
 import * as EpisodeInfoService from "./EpisodeInfoService";
 
 import Expo from "expo";

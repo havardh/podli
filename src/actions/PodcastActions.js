@@ -1,5 +1,5 @@
-import { dispatch } from "./Dispatcher";
-import { info } from "./PodcastInfoService";
+import { dispatch } from "../Dispatcher";
+import { info } from "../services/PodcastInfoService";
 
 export const ADD = "PODCAST#ADD";
 export const REMOVE = "PODCAST#REMOVE";

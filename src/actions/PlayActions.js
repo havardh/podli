@@ -1,4 +1,4 @@
-import { dispatch } from "./Dispatcher";
+import { dispatch } from "../Dispatcher";
 
 export const START = "PLAY#START";
 export const END = "PLAY#END";
