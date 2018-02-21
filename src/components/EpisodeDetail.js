@@ -3,8 +3,8 @@ import React from "react";
 import { StyleSheet, Image, Text, View } from "react-native";
 
 const EpisodeDetail = ({ episode, podcast }) => (
-  <View>
-    <Image style={styles.avatar} source={{ uri: episode.img }} />
+  <View style={styles.container}>
+    <Image style={styles.img} source={{ uri: episode.img }} />
     <View style={styles.details}>
       <Text style={styles.detailsHead}>{podcast.name}</Text>
       <Text>{episode.title}</Text>
@@ -14,7 +14,10 @@ const EpisodeDetail = ({ episode, podcast }) => (
 );
 
 const styles = StyleSheet.create({
-  avatar: {
+  container: {
+    alignItems: "center"
+  },
+  img: {
     width: 200,
     height: 200
   },

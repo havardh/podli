@@ -1,4 +1,6 @@
+import React from "react";
 import { TabNavigator, TabBarBottom, StackNavigator } from "react-navigation";
+import { FontAwesome } from "@expo/vector-icons";
 
 import AddPodcastScreen from "./src/screens/AddPodcastScreen";
 import EpisodeScreen from "./src/screens/EpisodeScreen";
@@ -19,12 +21,25 @@ const ListStack = StackNavigator({
 
 const App = TabNavigator(
   {
-    Home: { screen: HomeStack },
-    List: { screen: ListStack }
+    Home: {
+      screen: HomeStack,
+      navigationOptions: ({ navigation }) => ({
+        tabBarIcon: () => <FontAwesome name="list" size={28} color="#ccc" />
+      })
+    },
+    List: {
+      screen: ListStack,
+      navigationOptions: ({ navigation }) => ({
+        tabBarIcon: () => <FontAwesome name="podcast" size={28} color="#ccc" />
+      })
+    }
   },
   {
     tabBarComponent: TabBarBottom,
-    tabBarPosition: "bottom"
+    tabBarPosition: "bottom",
+    tabBarOption: {
+      showIcon: true
+    }
   }
 );
 

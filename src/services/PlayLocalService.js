@@ -9,6 +9,7 @@ import {
   onPlayStatus
 } from "../actions/PlayActions";
 import * as EpisodeInfoService from "./EpisodeInfoService";
+import ProgressStore from "../stores/ProgressStore";
 
 import Expo from "expo";
 
@@ -18,7 +19,7 @@ const playbackInstance = null;
 
 export async function play(podcastId, episodeId) {
   if (playbackInstance != null) {
-    if (PlayStore.getId() === episodeId) {
+    if (PlayStore.getEpisodeId() === episodeId) {
       await playbackInstance.playAsync();
       return;
     } else {
@@ -41,7 +42,8 @@ export async function play(podcastId, episodeId) {
     shouldPlay: true,
     rate: 1.0,
     shouldCorrectPitch: false,
-    volume: 1.0, //PlayStore.getVolume(),
+    volume: PlayStore.getVolume(),
+    positionMillis: ProgressStore.getPositionMillis({ podcastId, episodeId }),
     isMuted: false,
     isLooping: false
   };

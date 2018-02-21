@@ -1,5 +1,5 @@
 import React, { Component } from "react";
-import { StyleSheet, Image, Text, View, Button } from "react-native";
+import { StyleSheet, Image, Text, View } from "react-native";
 import Slider from "react-native-slider";
 
 import * as EpisodeActions from "../actions/EpisodeActions";
@@ -10,6 +10,17 @@ import PlayStore from "../stores/PlayStore";
 import EpisodeDetail from "../components/EpisodeDetail";
 import PlaybackControls from "../components/PlaybackControls";
 import PlaybackProgress from "../components/PlaybackProgress";
+import Button from "../components/Button";
+
+const styles = StyleSheet.create({
+  container: {
+    padding: 10,
+    margin: 5,
+    marginBottom: 0,
+    backgroundColor: "#fff"
+  },
+  slider: {}
+});
 
 export default class PlayScreen extends Component {
   static navigationOptions = {
@@ -111,21 +122,35 @@ export default class PlayScreen extends Component {
     const { episode, podcast, playState } = this.state;
     return (
       <View>
-        {episode && <EpisodeDetail episode={episode} podcast={podcast} />}
+        <View style={styles.container}>
+          <EpisodeDetail episode={episode} podcast={podcast} />
 
-        <Button title="Remove" onPress={this.removeEpisode} />
+          <Button title="Remove" onPress={this.removeEpisode} />
+        </View>
 
-        <PlaybackProgress {...playState} />
+        <View style={styles.container}>
+          <PlaybackProgress {...playState} />
 
-        <Slider value={playState.position} onValueChange={this.setPosition} />
+          <Slider
+            value={playState.position}
+            onValueChange={this.setPosition}
+            minimumTrackTintColor={"#ccc"}
+            thumbTintColor={"#ccc"}
+          />
 
-        <Slider value={playState.volume} onValueChange={this.setVolume} />
+          <PlaybackControls
+            onPlay={this.play}
+            onPause={this.pause}
+            onStop={this.stop}
+          />
 
-        <PlaybackControls
-          onPlay={this.play}
-          onPause={this.pause}
-          onStop={this.stop}
-        />
+          <Slider
+            value={playState.volume}
+            onValueChange={this.setVolume}
+            minimumTrackTintColor={"#ccc"}
+            thumbTintColor={"#ccc"}
+          />
+        </View>
       </View>
     );
   }

@@ -9,18 +9,7 @@ import {
 } from "react-native";
 
 import * as PodcastInfoService from "../services/PodcastInfoService";
-
-const styles = StyleSheet.create({
-  episode: {
-    flex: 1,
-    flexDirection: "row",
-    padding: 10,
-    height: 80
-  },
-  avatar: {
-    padding: 5
-  }
-});
+import styles from "../styles/Item";
 
 export default class PodcastListItem extends Component {
   state = {};
@@ -45,14 +34,16 @@ export default class PodcastListItem extends Component {
 
     return (
       <TouchableHighlight onPress={() => onPress(podcast)}>
-        <View style={styles.episode}>
-          <Image
-            style={styles.avatar}
-            source={{ uri: podcast.img }}
-            style={{ width: 60, height: 60 }}
-          />
-          <View style={styles.details}>
-            <Text>{podcast.name}</Text>
+        <View style={styles.container}>
+          <View style={styles.item}>
+            <Image
+              style={styles.img}
+              source={{ uri: podcast.img }}
+              style={{ width: 60, height: 60 }}
+            />
+            <View style={styles.details}>
+              <Text style={styles.detailsHead}>{podcast.name}</Text>
+            </View>
           </View>
         </View>
       </TouchableHighlight>

@@ -1,5 +1,7 @@
 import { dispatch } from "../Dispatcher";
 
+import PlayStore from "../stores/PlayStore";
+
 export const START = "PLAY#START";
 export const END = "PLAY#END";
 export const PAUSE = "PLAY#PAUSE";
@@ -42,5 +44,14 @@ export function onSetVolume(volume) {
 }
 
 export function onSetPosition(position) {
-  dispatch({ type: SET_POSITION, data: { position } });
+  const { podcastId, episodeId, durationMillis } = PlayStore.getState();
+  dispatch({
+    type: SET_POSITION,
+    data: {
+      position,
+      durationMillis,
+      podcastId,
+      episodeId
+    }
+  });
 }

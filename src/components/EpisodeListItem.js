@@ -1,5 +1,5 @@
 import React, { Component } from "react";
-
+import { isEqual } from "lodash";
 import {
   StyleSheet,
   Text,
@@ -10,27 +10,14 @@ import {
 
 import * as PodcastInfoService from "../services/PodcastInfoService";
 import * as EpisodeInfoService from "../services/EpisodeInfoService";
+import ProgressStore from "../stores/ProgressStore";
+import Loading from "./Loading";
+import styles from "../styles/Item";
 
-const styles = StyleSheet.create({
-  episode: {
-    flex: 1,
-    flexDirection: "row",
-    padding: 5,
-    margin: 4,
-    borderWidth: 1,
-    borderColor: "#ccc",
-    height: 80,
-    backgroundColor: "#fff"
-  },
-  avatar: {
-    padding: 5
-  },
-  details: {
-    marginLeft: 5
-  },
-  detailsHead: {
-    fontWeight: "bold"
-  }
+const progressStyle = position => ({
+  width: 100 * position + "%",
+  height: 1,
+  backgroundColor: "#111"
 });
 
 export default class EpisodeListItem extends Component {
@@ -40,33 +27,41 @@ export default class EpisodeListItem extends Component {
     const { podcastId, episodeId } = this.props;
     const podcast = await PodcastInfoService.info(podcastId);
     const episode = await EpisodeInfoService.info(podcastId, episodeId);
-    this.setState({ episode, podcast });
+    const position = ProgressStore.getPosition({ podcastId, episodeId });
+    this.setState({ episode, podcast, position });
+    ProgressStore.addListener(this.onProgressChange);
   }
+
+  componentWillUnmount() {
+    ProgressStore.removeListener(this.onProgressChange);
+  }
+
+  onProgressChange = () => {
+    const { podcastId, episodeId } = this.props;
+    this.setState({
+      position: ProgressStore.getPosition({ podcastId, episodeId })
+    });
+  };
 
   render() {
     const { onPress } = this.props;
 
     if (!this.state.episode) {
-      return (
-        <View>
-          <Text>Loading...</Text>
-        </View>
-      );
+      return <Loading />;
     }
-    const { episode, podcast } = this.state;
+    const { episode, podcast, position } = this.state;
 
     return (
       <TouchableHighlight onPress={() => onPress(episode)}>
-        <View style={styles.episode}>
-          <Image
-            style={styles.avatar}
-            source={{ uri: episode.img }}
-            style={{ width: 60, height: 60 }}
-          />
-          <View style={styles.details}>
-            <Text style={styles.detailsHead}>{podcast.name}</Text>
-            <Text>{episode.title}</Text>
-            <Text>{episode.guests.join(", ")}</Text>
+        <View style={styles.container}>
+          <View style={progressStyle(position)} />
+          <View style={styles.item}>
+            <Image style={styles.img} source={{ uri: episode.img }} />
+            <View style={styles.details}>
+              <Text style={styles.detailsHead}>{podcast.name}</Text>
+              <Text>{episode.title}</Text>
+              <Text>{episode.guests.join(", ")}</Text>
+            </View>
           </View>
         </View>
       </TouchableHighlight>

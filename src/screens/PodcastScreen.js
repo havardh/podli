@@ -9,12 +9,13 @@ export default class PodcastScreen extends Component {
   static navigationOptions = ({ navigation }) => ({
     title: "Podcasts",
     headerRight: (
-      <Button
-        style={{ paddingLeft: 10 }}
-        onPress={() => navigation.navigate("AddPodcast")}
-        title="Add"
-        color="#ccc"
-      />
+      <View style={{ marginRight: 10 }}>
+        <Button
+          onPress={() => navigation.navigate("AddPodcast")}
+          title="Add"
+          color="#ccc"
+        />
+      </View>
     )
   });
   state = {
