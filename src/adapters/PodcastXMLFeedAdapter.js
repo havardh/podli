@@ -1,5 +1,6 @@
 import { parseString } from "react-native-xml2js";
 import { get } from "lodash";
+import Cache from "./LocalCacheAdapter";
 
 async function parseXmlString(xml) {
   return await new Promise((resolve, reject) =>
@@ -10,20 +11,16 @@ async function parseXmlString(xml) {
   );
 }
 
-const feedCache = {};
+const feedCache = new Cache("feed");
 
 async function fetchFeed(feed) {
-  if (feedCache[feed]) {
-    return feedCache[feed];
-  }
-
-  const document = await fetch(feed)
-    .then(response => response.text())
-    .then(parseXmlString);
-
-  feedCache[feed] = document;
-
-  return document;
+  return await feedCache.get(
+    feed,
+    async feed =>
+      await fetch(feed)
+        .then(response => response.text())
+        .then(parseXmlString)
+  );
 }
 
 function extractPodcastInfo(document) {
@@ -51,7 +48,7 @@ function transformEpisode({ podcastId, img }) {
   };
 }
 
-const podcastCache = {};
+const podcastCache = new Cache("podcast");
 
 function transformPodcast(feed) {
   return info => ({
@@ -63,33 +60,25 @@ function transformPodcast(feed) {
 }
 
 export async function fetchPodcastInfo(feed) {
-  if (podcastCache[feed]) {
-    return podcastCache[feed];
-  }
-
-  const podcast = await fetchFeed(feed)
-    .then(extractPodcastInfo)
-    .then(transformPodcast(feed))
-    .catch(err => console.log("fetch", err));
-
-  podcastCache[feed] = podcast;
-
-  return podcast;
+  return await podcastCache.get(
+    feed,
+    async feed =>
+      await fetchFeed(feed)
+        .then(extractPodcastInfo)
+        .then(transformPodcast(feed))
+        .catch(err => console.log("fetch", err))
+  );
 }
 
-const episodeCache = {};
+const episodeCache = new Cache("episode");
 
 export async function fetchEpisodeList({ podcastId, feed, img }) {
-  if (episodeCache[podcastId]) {
-    return episodeCache[podcastId];
-  }
-
-  const episodes = await fetchFeed(feed)
-    .then(extractEpisodes)
-    .then(episodes => episodes.map(transformEpisode({ podcastId, img })))
-    .catch(err => console.log("fetch", err));
-
-  episodeCache[podcastId] = episodes;
-
-  return episodes;
+  return episodeCache.get(
+    feed,
+    async feed =>
+      await fetchFeed(feed)
+        .then(extractEpisodes)
+        .then(episodes => episodes.map(transformEpisode({ podcastId, img })))
+        .catch(err => console.log("fetch", err))
+  );
 }
