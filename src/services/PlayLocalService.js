@@ -34,6 +34,7 @@ export async function play(podcastId, episodeId) {
     allowsRecordingIOS: false,
     interruptionModeIOS: Audio.INTERRUPTION_MODE_IOS_DO_NOT_MIX,
     playsInSilentModeIOS: true,
+    playsInBackgroundModeAndroid: true,
     shouldDuckAndroid: true,
     interruptionModeAndroid: Audio.INTERRUPTION_MODE_ANDROID_DO_NOT_MIX
   });
@@ -45,7 +46,8 @@ export async function play(podcastId, episodeId) {
     volume: PlayStore.getVolume(),
     positionMillis: ProgressStore.getPositionMillis({ podcastId, episodeId }),
     isMuted: false,
-    isLooping: false
+    isLooping: false,
+    playsInBackground: true
   };
 
   const { status, sound } = await Audio.Sound.create(
